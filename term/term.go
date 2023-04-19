@@ -1,17 +1,67 @@
 package term
 
-import "os"
-import "fmt"
+import (
+	"bufio"
+	"bytes"
+	"fmt"
+	"os"
+	"unicode/utf8"
 
-func HideCursor() {
+	"github.com/jsniffen/geditor/gui"
+)
+
+func hideCursor(buffer []byte) {
 	os.Stdout.Write([]byte("\033[?25l"))
 }
 
-func ShowCursor() {
-	os.Stdout.Write([]byte("\033[?25h"))
+func setForeground(b *bytes.Buffer, c gui.Color) {
+	fmt.Fprintf(b, "\033[38;2;%d;%d;%dm", c.Red, c.Green, c.Blue)
 }
 
-func PrintColor(r, g, b uint8) {
-	s := fmt.Sprintf("\033[38;2;%d;%d;%dm", r, g, b)
-	os.Stdout.Write([]byte(s))
+func setBackground(b *bytes.Buffer, c gui.Color) {
+	fmt.Fprintf(b, "\033[48;2;%d;%d;%dm", c.Red, c.Green, c.Blue)
+}
+
+func GetEvent() (gui.Event, error) {
+	var e gui.Event
+
+	rd := bufio.NewReader(os.Stdin)
+
+	buf := make([]byte, 4)
+	n, err := rd.Read(buf)
+	if err != nil {
+		return e, err
+	}
+
+	if n == 1 {
+		e.KeyCode = buf[0]
+	}
+
+	return e, nil
+}
+
+func Render(cells []gui.Cell) {
+	b := bytes.Buffer{}
+
+	bg := gui.Color{}
+	setBackground(&b, bg)
+
+	fg := gui.Color{}
+	setForeground(&b, fg)
+
+	for _, cell := range cells {
+		if cell.Background != bg {
+			bg = cell.Background
+			setBackground(&b, bg)
+		}
+
+		if cell.Foreground != fg {
+			fg = cell.Foreground
+			setForeground(&b, fg)
+		}
+
+		r := utf8.AppendRune(nil, cell.Rune)
+		b.Write(r)
+	}
+	b.WriteTo(os.Stdout)
 }

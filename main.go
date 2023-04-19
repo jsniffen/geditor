@@ -1,8 +1,15 @@
 package main
 
-import "fmt"
-import "github.com/jsniffen/geditor/term"
-import "log"
+import (
+	"log"
+
+	"github.com/jsniffen/geditor/term"
+	"github.com/jsniffen/geditor/gui"
+)
+
+var Running = true
+var Width = 0
+var Height = 0
 
 func main() {
 	err := term.Init()
@@ -10,8 +17,25 @@ func main() {
 		log.Fatal(err)
 	}
 
-	for i := 0; i < 255; i += 10 {
-		term.PrintColor(uint8(i), uint8(i), uint8(i))
-		fmt.Println("hello world")
+	cells := make([]gui.Cell, 1024)
+	for i := range cells {
+		cells[i] = gui.Cell{
+			gui.Color{255, uint8(i), 255},
+			gui.Color{0, 0, 0},
+			'X',
+		}
+	}
+
+	for Running {
+		e, err := term.GetEvent()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if e.KeyCode == 'q' {
+			Running = false
+		}
+
+		term.Render(cells)
 	}
 }
