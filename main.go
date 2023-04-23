@@ -1,15 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
-	"github.com/jsniffen/geditor/term"
 	"github.com/jsniffen/geditor/gui"
+	"github.com/jsniffen/geditor/term"
 )
 
 var Running = true
-var Width = 0
-var Height = 0
+var Width uint32
+var Height uint32
 
 func main() {
 	err := term.Init()
@@ -17,7 +18,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cells := make([]gui.Cell, 1024)
+	Width, Height, err = term.GetSize()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cells := make([]gui.Cell, Width*Height)
 	for i := range cells {
 		cells[i] = gui.Cell{
 			gui.Color{255, uint8(i), 255},
