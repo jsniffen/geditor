@@ -22,7 +22,7 @@ func setBackground(b *bytes.Buffer, c gui.Color) {
 	fmt.Fprintf(b, "\033[48;2;%d;%d;%dm", c.Red, c.Green, c.Blue)
 }
 
-func GetEvent() (gui.Event, error) {
+func getEvent() (gui.Event, error) {
 	var e gui.Event
 
 	rd := bufio.NewReader(os.Stdin)
@@ -38,6 +38,21 @@ func GetEvent() (gui.Event, error) {
 	}
 
 	return e, nil
+}
+
+func GetEvents() chan gui.Event {
+	c := make(chan gui.Event)
+
+	go func() {
+		for {
+			ev, err := getEvent()
+			if err == nil {
+				c <- ev
+			}
+		}
+	}()
+
+	return c
 }
 
 func Render(cells []gui.Cell) {

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/jsniffen/geditor/gui"
 	"github.com/jsniffen/geditor/term"
@@ -32,14 +33,17 @@ func main() {
 		}
 	}
 
-	for Running {
-		e, err := term.GetEvent()
-		if err != nil {
-			log.Fatal(err)
-		}
+	chEvents := term.GetEvents()
+	chTime := time.Tick(time.Second)
 
-		if e.KeyCode == 'q' {
-			Running = false
+	for Running {
+		select {
+		case e := <-chEvents:
+			if e.KeyCode == 'q' {
+				Running = false
+			}
+
+		case _ = <-chTime:
 		}
 
 		term.Render(cells)
