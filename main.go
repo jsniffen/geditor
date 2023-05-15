@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -27,9 +26,9 @@ func main() {
 	cells := make([]gui.Cell, Width*Height)
 	for i := range cells {
 		cells[i] = gui.Cell{
-			gui.Color{255, uint8(i), 255},
 			gui.Color{0, 0, 0},
-			'X',
+			gui.Color{0, 0, 0},
+			' ',
 		}
 	}
 
@@ -45,6 +44,8 @@ func main() {
 
 		case _ = <-chTime:
 		}
+
+		gui.StatusBar(Width, Height, cells)
 
 		term.Render(cells)
 	}

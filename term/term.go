@@ -10,8 +10,12 @@ import (
 	"github.com/jsniffen/geditor/gui"
 )
 
-func hideCursor(buffer []byte) {
-	os.Stdout.Write([]byte("\033[?25l"))
+func hideCursor(b *bytes.Buffer) {
+	fmt.Fprint(b, "\033[?25l")
+}
+
+func moveCursor(b *bytes.Buffer, x, y int) {
+	fmt.Fprintf(b, "\033[%d;%dH", x, y)
 }
 
 func setForeground(b *bytes.Buffer, c gui.Color) {
@@ -57,6 +61,9 @@ func GetEvents() chan gui.Event {
 
 func Render(cells []gui.Cell) {
 	b := bytes.Buffer{}
+
+	hideCursor(&b)
+	moveCursor(&b, 1, 1)
 
 	bg := gui.Color{}
 	setBackground(&b, bg)

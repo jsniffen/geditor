@@ -29,3 +29,12 @@ func Init() error {
 
 	return nil
 }
+
+func GetSize() (uint32, uint32, error) {
+	ws, err := unix.IoctlGetWinsize(unix.Stdin, unix.TIOCGWINSZ)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return uint32(ws.Col), uint32(ws.Row), nil
+}
