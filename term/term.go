@@ -26,8 +26,8 @@ func setBackground(b *bytes.Buffer, c gui.Color) {
 	fmt.Fprintf(b, "\033[48;2;%d;%d;%dm", c.Red, c.Green, c.Blue)
 }
 
-func getEvent() (gui.Event, error) {
-	var e gui.Event
+func getEvent() (Event, error) {
+	var e Event
 
 	rd := bufio.NewReader(os.Stdin)
 
@@ -39,13 +39,31 @@ func getEvent() (gui.Event, error) {
 
 	if n == 1 {
 		e.KeyCode = buf[0]
+	} else if n == 3 {
+		if buf[0] == '\033' && buf[1] == '[' {
+			if buf[2] == 'A' {
+				e.KeyCode = KeyUp
+			} else if buf[2] == 'B' {
+				e.KeyCode = KeyDown
+			} else if buf[2] == 'C' {
+				e.KeyCode = KeyRight
+			} else if buf[2] == 'D' {
+				e.KeyCode = KeyLeft
+			}
+		}
+	} else if n == 4 {
+		if buf[0] == '\033' && buf[1] == '[' && buf[3] == '~' {
+			if buf[2] == '3' {
+				e.KeyCode = KeyDelete
+			}
+		}
 	}
 
 	return e, nil
 }
 
-func GetEvents() chan gui.Event {
-	c := make(chan gui.Event)
+func GetEvents() chan Event {
+	c := make(chan Event)
 
 	go func() {
 		for {

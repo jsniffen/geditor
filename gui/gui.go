@@ -12,10 +12,6 @@ type Cell struct {
 	Rune       rune
 }
 
-type Event struct {
-	KeyCode byte
-}
-
 func StatusBar(w, h uint32, cells []Cell) {
 	for i := 0; i < int(w); i += 1 {
 		cells[int(w)*(int(h)-1) + i] = Cell{
