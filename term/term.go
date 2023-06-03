@@ -38,7 +38,11 @@ func getEvent() (Event, error) {
 	}
 
 	if n == 1 {
-		e.KeyCode = buf[0]
+		if buf[0] == 127 {
+			e.KeyCode = KeyBackspace
+		} else {
+			e.KeyCode = buf[0]
+		}
 	} else if n == 3 {
 		if buf[0] == '\033' && buf[1] == '[' {
 			if buf[2] == 'A' {

@@ -61,7 +61,7 @@ func main() {
 		case e := <-chEvents:
 			if e.KeyCode == 'q' {
 				Running = false
-			} else if e.KeyCode == term.KeyDelete {
+			} else if e.KeyCode == term.KeyBackspace {
 				gb.Delete()
 			} else {
 				gb.Insert(e.KeyCode)
