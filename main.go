@@ -18,6 +18,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer term.Close()
 
 	Width, Height, err = term.GetSize()
 	if err != nil {

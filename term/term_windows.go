@@ -60,3 +60,5 @@ func GetSize() (uint32, uint32, error) {
 
 	return uint32(w), uint32(h), nil
 }
+
+func Close() {}

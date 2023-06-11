@@ -81,6 +81,10 @@ func GetEvents() chan Event {
 	return c
 }
 
+func reset() {
+	fmt.Fprintf(os.Stdout, "\033[0m")
+}
+
 func Render(cells []gui.Cell) {
 	b := bytes.Buffer{}
 
