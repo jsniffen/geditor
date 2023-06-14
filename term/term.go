@@ -14,6 +14,10 @@ func hideCursor(b *bytes.Buffer) {
 	fmt.Fprint(b, "\033[?25l")
 }
 
+func showCursor(b *bytes.Buffer) {
+	fmt.Fprint(b, "\033[?25h")
+}
+
 func moveCursor(b *bytes.Buffer, x, y int) {
 	fmt.Fprintf(b, "\033[%d;%dH", x, y)
 }
@@ -66,6 +70,19 @@ func getEvent() (Event, error) {
 	return e, nil
 }
 
+func reset(b *bytes.Buffer) {
+	fmt.Fprintf(b, "\033[0m")
+}
+
+func Close() error {
+	b := bytes.Buffer{}
+	showCursor(&b)
+	reset(&b)
+	b.WriteTo(os.Stdout)
+
+	return deInit()
+}
+
 func GetEvents() chan Event {
 	c := make(chan Event)
 
@@ -79,10 +96,6 @@ func GetEvents() chan Event {
 	}()
 
 	return c
-}
-
-func reset() {
-	fmt.Fprintf(os.Stdout, "\033[0m")
 }
 
 func Render(cells []gui.Cell) {

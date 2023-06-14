@@ -44,9 +44,7 @@ func GetSize() (uint32, uint32, error) {
 	return uint32(ws.Col), uint32(ws.Row), nil
 }
 
-func Close() error {
-	reset()
-
+func deInit() error {
 	f, err := os.Open("/dev/tty")
 	if err != nil {
 		return err
